@@ -113,10 +113,14 @@ limitations under the License.
   </repositories>
 
   <distributionManagement>
-      <repository>
-          <id>mode-third-party-maven-repo</id>
-          <url>http://maven.mode.com/nexus/content/repositories/thirdparty</url>
-      </repository>
+    <repository>
+      <id>mode-third-party-maven-repo</id>
+      <url>http://maven.mode.com/nexus/content/repositories/thirdparty</url>
+    </repository>
+    <snapshotRepository>
+      <id>mode-third-party-maven-repo</id>
+      <url>http://maven.mode.com/nexus/content/repositories/thirdparty</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <modules>
