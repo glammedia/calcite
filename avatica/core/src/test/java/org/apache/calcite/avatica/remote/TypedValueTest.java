@@ -113,7 +113,7 @@ public class TypedValueTest {
   public void testSqlTime() {
     // millis since epoch
     serializeAndEqualityCheck(
-        TypedValue.ofLocal(Rep.JAVA_SQL_TIME, 42 * 1024 * 1024));
+        TypedValue.ofLocal(Rep.JAVA_SQL_TIME, 42L * 1024L * 1024L * 1000L));
   }
 
   @Test

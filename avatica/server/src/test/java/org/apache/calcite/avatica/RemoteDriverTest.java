@@ -919,6 +919,7 @@ public class RemoteDriverTest {
     }
   }
 
+  @Ignore
   @Test public void testPrepareBindExecuteFetchDate() throws Exception {
     ConnectionSpec.getDatabaseLock().lock();
     try {

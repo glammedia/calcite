@@ -145,10 +145,10 @@ public class TypedValue {
     case BYTE_STRING:
       return value instanceof String;
     case JAVA_SQL_DATE:
-    case JAVA_SQL_TIME:
       return value instanceof Integer;
     case JAVA_SQL_TIMESTAMP:
     case JAVA_UTIL_DATE:
+    case JAVA_SQL_TIME:
       return value instanceof Long;
     default:
       return true;
@@ -268,9 +268,9 @@ public class TypedValue {
           adjust(((Number) value).longValue() * DateTimeUtils.MILLIS_PER_DAY,
               calendar));
     case JAVA_SQL_TIME:
-      return new java.sql.Time(adjust((Number) value, calendar));
+      return new java.sql.Time(((Number) value).longValue());
     case JAVA_SQL_TIMESTAMP:
-      return new java.sql.Timestamp(adjust((Number) value, calendar));
+      return new java.sql.Timestamp(((Number) value).longValue());
     default:
       return serialToLocal(type, value);
     }
@@ -296,14 +296,12 @@ public class TypedValue {
     case JAVA_SQL_DATE:
     case JAVA_SQL_TIME:
       long t = ((Date) value).getTime();
-      if (calendar != null) {
-        t += calendar.getTimeZone().getOffset(t);
-      }
       switch (rep) {
       case JAVA_SQL_DATE:
+        if (calendar != null) {
+          t += calendar.getTimeZone().getOffset(t);
+        }
         return (int) DateTimeUtils.floorDiv(t, DateTimeUtils.MILLIS_PER_DAY);
-      case JAVA_SQL_TIME:
-        return (int) DateTimeUtils.floorMod(t, DateTimeUtils.MILLIS_PER_DAY);
       default:
         return t;
       }
@@ -377,12 +375,12 @@ public class TypedValue {
       builder.setNumberValue((long) value);
       break;
     case JAVA_SQL_DATE:
-    case JAVA_SQL_TIME:
       // Persisted as integers
       builder.setNumberValue(Integer.valueOf((int) value).longValue());
       break;
     case JAVA_SQL_TIMESTAMP:
     case JAVA_UTIL_DATE:
+    case JAVA_SQL_TIME:
       // Persisted as longs
       builder.setNumberValue((long) value);
       break;
@@ -463,9 +461,9 @@ public class TypedValue {
       value = Long.valueOf(proto.getNumberValue());
       break;
     case JAVA_SQL_DATE:
-    case JAVA_SQL_TIME:
       value = Long.valueOf(proto.getNumberValue()).intValue();
       break;
+    case JAVA_SQL_TIME:
     case JAVA_SQL_TIMESTAMP:
     case JAVA_UTIL_DATE:
       value = proto.getNumberValue();
