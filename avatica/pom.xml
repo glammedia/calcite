@@ -119,7 +119,7 @@ limitations under the License.
     </repository>
     <snapshotRepository>
       <id>mode-third-party-maven-repo</id>
-      <url>http://maven.mode.com/nexus/content/repositories/thirdparty</url>
+      <url>http://maven.mode.com/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
