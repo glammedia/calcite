@@ -29,7 +29,7 @@ limitations under the License.
   <groupId>org.apache.calcite.avatica</groupId>
   <artifactId>avatica-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.7.1</version>
+  <version>1.7.1-1-cdh5.4.7-SNAPSHOT</version>
 
   <!-- More project information. -->
   <name>Apache Calcite Avatica Project</name>
@@ -98,11 +98,26 @@ limitations under the License.
   </issueManagement>
 
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/calcite.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/calcite.git</developerConnection>
-    <url>https://github.com/apache/calcite</url>
-    <tag>calcite-avatica-1.7.1</tag>
+    <connection>scm:git:git@github.com:glammedia/calcite.git</connection>
+    <developerConnection>scm:git:git@github.com:glammedia/calcite.git</developerConnection>
+    <url>https://github.com/glammedia/calcite</url>
+    <tag>1.7.1-1-cdh5.4.7</tag>
   </scm>
+
+  <repositories>
+    <!-- This has to be here to find the parent pom :P -->
+    <repository>
+      <id>mode-maven-repo</id>
+      <url>http://maven.mode.com/nexus/content/groups/public/</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+      <repository>
+          <id>mode-third-party-maven-repo</id>
+          <url>http://maven.mode.com/nexus/content/repositories/thirdparty</url>
+      </repository>
+  </distributionManagement>
 
   <modules>
     <module>core</module>
@@ -380,6 +395,9 @@ limitations under the License.
             <version>${maven-scm-provider.version}</version>
           </dependency>
         </dependencies>
+        <configuration>
+          <tagNameFormat>avatica-@{project.version}</tagNameFormat>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -546,18 +564,6 @@ limitations under the License.
       </plugin>
     </plugins>
   </reporting>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
   <profiles>
     <profile>
