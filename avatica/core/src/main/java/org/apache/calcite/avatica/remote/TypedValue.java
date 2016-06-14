@@ -145,10 +145,11 @@ public class TypedValue {
     case BYTE_STRING:
       return value instanceof String;
     case JAVA_SQL_DATE:
+    case JAVA_SQL_TIME:
       return value instanceof Integer;
     case JAVA_SQL_TIMESTAMP:
+      return value instanceof String;
     case JAVA_UTIL_DATE:
-    case JAVA_SQL_TIME:
       return value instanceof Long;
     default:
       return true;
@@ -225,7 +226,7 @@ public class TypedValue {
     case LONG:
     case JAVA_UTIL_DATE:
     case JAVA_SQL_TIMESTAMP:
-      return ((Number) value).longValue();
+      return value;
     case FLOAT:
       return ((Number) value).floatValue();
     case DOUBLE:
@@ -268,9 +269,27 @@ public class TypedValue {
           adjust(((Number) value).longValue() * DateTimeUtils.MILLIS_PER_DAY,
               calendar));
     case JAVA_SQL_TIME:
-      return new java.sql.Time(((Number) value).longValue());
+      return new java.sql.Time(adjust((Number) value, calendar));
     case JAVA_SQL_TIMESTAMP:
-      return new java.sql.Timestamp(((Number) value).longValue());
+      String strValue = (String) value;
+      int dotLocation = strValue.indexOf('.');
+
+      if (dotLocation <= 0 || dotLocation == (strValue.length() - 1)) {
+        throw new RuntimeException("invalid timestamp format: " + strValue);
+      }
+
+      String secondsStr = strValue.substring(0, dotLocation);
+      String nanosecondsStr = strValue.substring(dotLocation + 1);
+
+      long seconds = Long.parseLong(secondsStr);
+      long nanoSeconds = Long.parseLong(nanosecondsStr);
+
+      java.sql.Timestamp result = new java.sql.Timestamp(seconds * 1000L
+          + nanoSeconds / 1000000L);
+
+      result.setNanos((int) nanoSeconds);
+
+      return result;
     default:
       return serialToLocal(type, value);
     }
@@ -292,16 +311,32 @@ public class TypedValue {
     case BYTE_STRING:
       return new ByteString((byte[]) value).toBase64String();
     case JAVA_UTIL_DATE:
+      return ((Date) value).getTime();
     case JAVA_SQL_TIMESTAMP:
+      int nanos = 0;
+      long millis;
+
+      if (value instanceof java.sql.Timestamp) {
+        java.sql.Timestamp ts = (java.sql.Timestamp) value;
+        nanos = ts.getNanos();
+        millis = ts.getTime();
+      } else {
+        millis = ((java.sql.Date) value).getTime();
+      }
+
+      return String.format("%d.%03d%06d"
+          , millis / 1000L, millis % 1000L, nanos % 1000000);
     case JAVA_SQL_DATE:
     case JAVA_SQL_TIME:
       long t = ((Date) value).getTime();
+      if (calendar != null) {
+        t += calendar.getTimeZone().getOffset(t);
+      }
       switch (rep) {
       case JAVA_SQL_DATE:
-        if (calendar != null) {
-          t += calendar.getTimeZone().getOffset(t);
-        }
         return (int) DateTimeUtils.floorDiv(t, DateTimeUtils.MILLIS_PER_DAY);
+      case JAVA_SQL_TIME:
+        return (int) DateTimeUtils.floorMod(t, DateTimeUtils.MILLIS_PER_DAY);
       default:
         return t;
       }
@@ -375,12 +410,14 @@ public class TypedValue {
       builder.setNumberValue((long) value);
       break;
     case JAVA_SQL_DATE:
+    case JAVA_SQL_TIME:
       // Persisted as integers
       builder.setNumberValue(Integer.valueOf((int) value).longValue());
       break;
     case JAVA_SQL_TIMESTAMP:
+      builder.setStringValue((String) value);
+      break;
     case JAVA_UTIL_DATE:
-    case JAVA_SQL_TIME:
       // Persisted as longs
       builder.setNumberValue((long) value);
       break;
@@ -461,10 +498,12 @@ public class TypedValue {
       value = Long.valueOf(proto.getNumberValue());
       break;
     case JAVA_SQL_DATE:
+    case JAVA_SQL_TIME:
       value = Long.valueOf(proto.getNumberValue()).intValue();
       break;
-    case JAVA_SQL_TIME:
     case JAVA_SQL_TIMESTAMP:
+      value = proto.getStringValue();
+      break;
     case JAVA_UTIL_DATE:
       value = proto.getNumberValue();
       break;
