@@ -29,7 +29,7 @@ limitations under the License.
   <groupId>org.apache.calcite.avatica</groupId>
   <artifactId>avatica-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.7.1-4-cdh5.4.7</version>
+  <version>1.7.1-5-cdh5.4.7-SNAPSHOT</version>
 
   <!-- More project information. -->
   <name>Apache Calcite Avatica Project</name>
@@ -101,7 +101,7 @@ limitations under the License.
     <connection>scm:git:git@github.com:glammedia/calcite.git</connection>
     <developerConnection>scm:git:git@github.com:glammedia/calcite.git</developerConnection>
     <url>https://github.com/glammedia/calcite</url>
-    <tag>avatica-1.7.1-4-cdh5.4.7</tag>
+    <tag>1.7.1-1-cdh5.4.7</tag>
   </scm>
 
   <repositories>
