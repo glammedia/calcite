@@ -180,7 +180,13 @@ class JdbcResultSet extends Meta.MetaResultSet {
           : (int) (aTime.getTime() % DateTimeUtils.MILLIS_PER_DAY);
     case Types.TIMESTAMP:
       final Timestamp aTimestamp = resultSet.getTimestamp(j + 1, calendar);
-      return aTimestamp == null ? null : aTimestamp.getTime();
+      if (aTimestamp == null) {
+        return null;
+      }
+      long seconds = aTimestamp.getTime() / 1000;
+      long millis = aTimestamp.getTime() % 1000;
+      int nanos = aTimestamp.getNanos() % 1000000;
+      return String.format("%d.%03d%06d", seconds, millis, nanos);
     case Types.ARRAY:
       final Array array = resultSet.getArray(j + 1);
       if (null == array) {
