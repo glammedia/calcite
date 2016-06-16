@@ -20,6 +20,7 @@ import org.apache.calcite.avatica.AvaticaStatement;
 import org.apache.calcite.avatica.Meta;
 import org.apache.calcite.avatica.util.DateTimeUtils;
 
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -149,6 +150,9 @@ class JdbcResultSet extends Meta.MetaResultSet {
   private static Object getValue(ResultSet resultSet, int type, int j,
       Calendar calendar) throws SQLException {
     switch (type) {
+    case Types.DECIMAL:
+      final BigDecimal aDecimal = resultSet.getBigDecimal(j + 1);
+      return aDecimal == null ? null : aDecimal.toString();
     case Types.BIGINT:
       final long aLong = resultSet.getLong(j + 1);
       return aLong == 0 && resultSet.wasNull() ? null : aLong;

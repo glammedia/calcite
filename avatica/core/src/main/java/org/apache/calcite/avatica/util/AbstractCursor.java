@@ -693,6 +693,10 @@ public abstract class AbstractCursor implements Cursor {
     }
 
     protected Number getNumber() {
+      Object obj = super.getObject();
+      if (obj instanceof String) {
+        return new BigDecimal((String) obj);
+      }
       return (Number) super.getObject();
     }
 

@@ -236,6 +236,7 @@ public class TypedValue {
           : value instanceof BigInteger ? new BigDecimal((BigInteger) value)
           : value instanceof Double ? new BigDecimal((Double) value)
           : value instanceof Float ? new BigDecimal((Float) value)
+          : value instanceof String ? new BigDecimal((String) value)
           : new BigDecimal(((Number) value).longValue());
     case BYTE_STRING:
       return ByteString.ofBase64((String) value);
